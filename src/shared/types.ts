@@ -74,6 +74,11 @@ export interface Story {
   importance: number; // 1..5
   articleIds: string[];
   art: ArtSpec;
+  /** 1..5: tiềm năng dựng thành bài đồ họa (có số liệu, không gian, so sánh, diễn biến). */
+  visualScore?: number;
+  visualAngle?: string;
+  /** Có bài đồ họa kể chuyện (trang /story/:id). */
+  hasVisual?: boolean;
 }
 
 export interface Digest {

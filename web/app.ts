@@ -2,6 +2,8 @@ import Sortable from "sortablejs";
 import { renderArt } from "../src/shared/art";
 import { CATEGORIES, type Article, type Category, type Digest, type Story } from "../src/shared/types";
 import { bubbles, donut, esc, hbars, moodMap, timeline, type Datum } from "./charts";
+import { mountGraphic } from "./graphics";
+import type { Graphic } from "../src/shared/visual-types";
 
 // ───────────────────────── trạng thái ─────────────────────────
 const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
@@ -85,8 +87,22 @@ async function loadDigest() {
   renderAll();
 }
 
+async function renderVisuals() {
+  const list = (await (await fetch("/api/visuals", { cache: "no-store" })).json()) as {
+    storyId: string; kicker: string; title: string; dek: string; hero: Graphic; heroState?: string;
+  }[];
+  const row = $("#visRow");
+  $("#visuals").hidden = list.length === 0;
+  row.innerHTML = list
+    .map((v) => `<a class="vis-card" href="/story/${encodeURIComponent(v.storyId)}"><figure class="graphic" data-vis="${esc(v.storyId)}"></figure>
+      <div class="vis-body"><small>${esc(v.kicker)}</small><h3>${esc(v.title)}</h3><p>${esc(v.dek)}</p></div></a>`)
+    .join("");
+  list.forEach((v) => mountGraphic(row.querySelector<HTMLElement>(`[data-vis="${CSS.escape(v.storyId)}"]`)!, v.hero, v.heroState));
+}
+
 function renderAll() {
   if (!digest) return;
+  void renderVisuals();
   renderTopMeta();
   renderHero();
   renderChips();
@@ -185,6 +201,7 @@ function cardHtml(s: Story): string {
     <div class="art">${art(s.art, s.id)}
       <span class="chip" style="--c:${c.color}">${c.label}</span>
       <span class="badge" title="${arts.length} bài báo">📰 ${arts.length}</span>
+      ${s.hasVisual ? `<span class="badge vis">◆ Đồ họa</span>` : ""}
     </div>
     <div class="card-body">
       <h3>${esc(s.title)}</h3>
@@ -413,6 +430,7 @@ function openStory(id: string) {
           .join("")}
       </div>
       <div class="m-actions">
+        ${s.hasVisual ? `<a class="btn primary" href="/story/${encodeURIComponent(s.id)}">◆ Xem bài đồ họa</a>` : ""}
         <button class="btn ${pinned ? "ghost" : "primary"}" data-pin="${esc(s.id)}">${pinned ? "✓ Đang theo dõi" : "📌 Ghim theo dõi"}</button>
         <button class="btn ghost" data-share="${esc(s.id)}">🔗 Chia sẻ</button>
       </div>
@@ -480,7 +498,8 @@ document.addEventListener("click", async (e) => {
   const open = t.closest<HTMLElement>("[data-open], .card, .pin, .dot");
   if (open) {
     const id = open.dataset.open ?? open.dataset.id ?? open.dataset.story;
-    if (id && storyMap.has(id)) openStory(id);
+    if (id && storyMap.get(id)?.hasVisual && !open.classList.contains("pin")) location.href = `/story/${encodeURIComponent(id)}`;
+    else if (id && storyMap.has(id)) openStory(id);
     else if (open.classList.contains("pin")) {
       const p = ui.pins.find((x) => x.id === id);
       if (p?.url) window.open(p.url, "_blank");
@@ -531,7 +550,7 @@ $("#clearWatch").addEventListener("click", () => {
 });
 
 // theme
-const theme = LS.get<string>("theme", matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+const theme = LS.get<string>("theme", "light");
 document.documentElement.dataset.theme = theme;
 $("#themeBtn").addEventListener("click", () => {
   const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";

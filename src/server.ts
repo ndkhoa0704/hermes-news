@@ -1,6 +1,12 @@
 import { config } from "./config";
-import { LATEST, runPipeline } from "./pipeline/run";
+import { join } from "node:path";
+import { LATEST, VISUAL_DIR, runPipeline } from "./pipeline/run";
 import homepage from "../web/index.html";
+import storyPage from "../web/story.html";
+import type { Digest } from "./shared/types";
+
+const GEO_DIR = join(import.meta.dir, "..", "web", "geo");
+const safeId = (s: string) => /^[A-Za-z0-9_-]{1,80}$/.test(s);
 
 // Trạng thái pipeline (chỉ một lần chạy tại một thời điểm)
 const state = {
@@ -44,6 +50,33 @@ const server = Bun.serve({
   development: process.env.NODE_ENV !== "production" && { hmr: true, console: true },
   routes: {
     "/": homepage,
+    "/story/:id": storyPage,
+    "/api/story/:id": async (req) => {
+      const id = req.params.id;
+      if (!safeId(id)) return new Response("Bad id", { status: 400 });
+      const f = Bun.file(join(VISUAL_DIR, `${id}.json`));
+      if (!(await f.exists())) return Response.json({ error: "Không có bài đồ họa" }, { status: 404 });
+      return new Response(f, { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-cache" } });
+    },
+    // danh sách bài đồ họa của bản tin hiện tại (kèm hero để trang chủ vẽ thumbnail)
+    "/api/visuals": async () => {
+      const lf = Bun.file(LATEST);
+      if (!(await lf.exists())) return Response.json([]);
+      const d = (await lf.json()) as Digest;
+      const out = [];
+      for (const s of d.stories.filter((x) => x.hasVisual)) {
+        const f = Bun.file(join(VISUAL_DIR, `${s.id}.json`));
+        if (!(await f.exists())) continue;
+        const v = await f.json();
+        out.push({ storyId: s.id, kicker: v.kicker, title: v.title, dek: v.dek, hero: v.hero, heroState: v.heroState, category: s.category });
+      }
+      return Response.json(out, { headers: { "cache-control": "no-cache" } });
+    },
+    "/geo/:file": async (req) => {
+      const name = req.params.file;
+      if (!/^(world|sea)\.json$/.test(name)) return new Response("Not found", { status: 404 });
+      return new Response(Bun.file(join(GEO_DIR, name)), { headers: { "content-type": "application/json", "cache-control": "public, max-age=604800" } });
+    },
     "/api/digest": async () => {
       const f = Bun.file(LATEST);
       if (!(await f.exists())) return Response.json({ error: "Chưa có bản tin, đang tạo…" }, { status: 404 });

@@ -46,6 +46,9 @@ Cấu trúc JSON:
       "sentiment": số từ -1 (rất tiêu cực) đến 1 (rất tích cực),
       "importance": số nguyên 1–5,
       "articleIds": ["id các bài thuộc câu chuyện, lấy đúng từ dữ liệu"],
+      "visualScore": số nguyên 1–5 — mức phù hợp để dựng bài đồ họa kể chuyện (5 = nhiều số liệu cụ thể, có so sánh
+                     trước/sau hoặc kế hoạch/thực tế, có yếu tố không gian/công trình/địa lý hoặc diễn biến theo thời gian),
+      "visualAngle": "1 câu: nếu làm đồ họa thì kể bằng hình gì (vd: mô hình 3D so sánh quy hoạch và thực tế; bản đồ đường đi của bão)",
       "art": {
         "motif": một trong các mô-típ bên dưới,
         "palette": ["3–5 mã màu hex #rrggbb hợp cảm xúc: tông lạnh/tối cho tin buồn, ấm/sáng cho tin vui"],

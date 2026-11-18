@@ -20,6 +20,10 @@ module.exports = {
         REFRESH_CRON: '30 8 * * *',
         TZ_CRON: 'Asia/Ho_Chi_Minh',
         ALLOW_MANUAL_REFRESH: 'false',
+        // Hermes dùng Claude Sonnet 5; mỗi ngày dựng 5 bài đồ họa kể chuyện
+        HERMES_MODEL: 'claude-sonnet-5',
+        HERMES_PROVIDER: 'anthropic',
+        VISUAL_COUNT: '5',
         // hermes nằm ở ~/.local/bin
         PATH: `${join(process.env.HOME || '', '.local', 'bin')}:${join(process.env.HOME || '', '.bun', 'bin')}:${process.env.PATH}`,
       },

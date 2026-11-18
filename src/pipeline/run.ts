@@ -6,13 +6,17 @@ import type { Digest } from "../shared/types";
 import { fallbackStories } from "./fallback";
 import { runHermesEditor } from "./hermes";
 import { normalizeStories } from "./normalize";
+import { pickVisualStories, runVisualDesk } from "./visual";
 
 export const LATEST = join(config.dataDir, "latest.json");
+export const VISUAL_DIR = join(config.dataDir, "visual");
 const KEEP_RUNS = 24;
 
 export interface RunOptions {
   /** Bỏ qua Hermes, dùng biên tập dự phòng (dùng để test nhanh). */
   skipHermes?: boolean;
+  /** Bỏ qua bước dựng bài đồ họa. */
+  skipVisual?: boolean;
   log?: (msg: string) => void;
 }
 
@@ -64,6 +68,11 @@ export async function runPipeline(opts: RunOptions = {}): Promise<Digest> {
     stats: { bySource, fetchErrors: errors, hermesMs, hourly },
   };
 
+  // ② b — ban Đồ họa dựng bài kể chuyện cho các câu chuyện tiềm năng nhất
+  if (editor === "hermes" && !opts.skipVisual && config.visualCount > 0) {
+    await buildVisuals(digest, runDir, log);
+  }
+
   const json = JSON.stringify(digest);
   await Bun.write(join(runDir, "digest.json"), json);
   await Bun.write(join(config.dataDir, "history", `${runId}.json`), json);
@@ -79,7 +88,30 @@ export async function runPipeline(opts: RunOptions = {}): Promise<Digest> {
   return digest;
 }
 
+/** Dựng bài đồ họa cho digest (ghi data/visual/<storyId>.json và đánh dấu hasVisual). */
+export async function buildVisuals(digest: Digest, runDir: string, log: (m: string) => void) {
+  const picked = pickVisualStories(digest.stories);
+  log(`② b Ban Đồ họa (Hermes) dựng ${picked.length} bài kể chuyện bằng đồ họa…`);
+  const visuals = await runVisualDesk(picked, new Map(digest.articles.map((a) => [a.id, a])), runDir, log);
+  await $`mkdir -p ${VISUAL_DIR}`;
+  for (const v of visuals) await Bun.write(join(VISUAL_DIR, `${v.storyId}.json`), JSON.stringify(v));
+  const ok = new Set(visuals.map((v) => v.storyId));
+  for (const s of digest.stories) s.hasVisual = ok.has(s.id);
+  // xoá bài đồ họa cũ hơn 3 ngày
+  await $`find ${VISUAL_DIR} -name "*.json" -mtime +3 -delete`.nothrow().quiet();
+  log(`   → ${visuals.length}/${picked.length} bài đồ họa thành công`);
+}
+
 if (import.meta.main) {
-  const skipHermes = process.argv.includes("--no-hermes");
-  await runPipeline({ skipHermes });
+  if (process.argv.includes("--visual-only")) {
+    // chỉ dựng lại bài đồ họa cho bản tin hiện có
+    const digest = (await Bun.file(LATEST).json()) as Digest;
+    const runDir = join(config.dataDir, "runs", "visual-" + new Date().toISOString().replace(/[:.]/g, "-"));
+    await $`mkdir -p ${runDir}`;
+    await buildVisuals(digest, runDir, console.log);
+    await Bun.write(LATEST + ".tmp", JSON.stringify(digest));
+    await $`mv ${LATEST + ".tmp"} ${LATEST}`;
+  } else {
+    await runPipeline({ skipHermes: process.argv.includes("--no-hermes"), skipVisual: process.argv.includes("--no-visual") });
+  }
 }

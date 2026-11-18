@@ -15,7 +15,11 @@ export const config = {
   manualRefresh: (process.env.ALLOW_MANUAL_REFRESH ?? "true") === "true",
   /** Lệnh Hermes CLI. */
   hermesBin: process.env.HERMES_BIN ?? "hermes",
-  hermesModel: process.env.HERMES_MODEL ?? "", // rỗng = model mặc định của Hermes
+  hermesModel: process.env.HERMES_MODEL ?? "claude-sonnet-5",
+  hermesProvider: process.env.HERMES_PROVIDER ?? "anthropic",
+  /** Số câu chuyện được dựng thành bài đồ họa kể chuyện mỗi lần chạy, và số lượt Hermes chạy song song. */
+  visualCount: Number(process.env.VISUAL_COUNT ?? 5),
+  visualConcurrency: Number(process.env.VISUAL_CONCURRENCY ?? 3),
   hermesTimeoutMs: Number(process.env.HERMES_TIMEOUT_MS ?? 15 * 60_000),
   /** Số bài tối đa gửi cho Hermes. */
   maxArticles: Number(process.env.MAX_ARTICLES ?? 140),

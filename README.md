@@ -20,6 +20,17 @@ cho từng sự kiện.
               Bun.serve (HTML import, API, Bun.cron tự cập nhật) ─▶ trình duyệt
 ```
 
+## Bài đồ họa kể chuyện (kiểu VnExpress Đồ họa)
+Sau bước biên tập, Hermes (Claude Sonnet 5, `--ignore-rules` để văn phong trung lập) chấm `visualScore` cho từng câu chuyện.
+5 câu chuyện tiềm năng nhất được đưa sang **ban Đồ họa**: pipeline lấy **toàn văn** các bài gốc (HTMLRewriter) rồi chạy
+song song mỗi câu chuyện một lượt Hermes với prompt `src/pipeline/visual-prompt.ts` để dựng bài longform scrollytelling:
+- hero + 3–5 chương, mỗi chương một đồ họa sticky, các bước văn bản cuộn qua và làm nổi từng phần (`focus`/`state`);
+- thư viện đồ họa: **iso** (mô hình 3D isometric, phần sai phạm/tâm điểm tô đỏ, chuyển cảnh quy hoạch ↔ thực tế),
+  **compare** (được duyệt vs thực tế, mỗi chỉ tiêu một thang đo), **units** (waffle), **map** (Việt Nam kèm Hoàng Sa,
+  Trường Sa / thế giới / phố phường), **timeline**, **flow**, **actors**, **bars**, **bignumber**, **quote**;
+- hộp số liệu, mục "Về dữ liệu", danh sách nguồn. Trang: `/story/:id`. Renderer: `web/graphics/*`.
+Chỉ dựng lại phần đồ họa cho bản tin hiện có: `bun src/pipeline/run.ts --visual-only`.
+
 ## Tính năng giao diện
 - **Ảnh trừu tượng sinh theo sự kiện**: Hermes chọn 1 trong 13 mô-típ (sóng, tăng trưởng, sụt giảm, mạng lưới, quỹ đạo, mảnh vỡ,
   nở hoa, đô thị, nhịp đập, xoắn ốc, gợn sóng, hạt, núi), bảng màu theo cảm xúc, độ dữ dội/mật độ, kèm câu mô tả ẩn dụ.

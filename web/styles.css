@@ -1,3 +1,4 @@
+@import "./graphics/graphics.css";
 :root {
   --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --radius: 18px;
@@ -24,8 +25,8 @@
   --text: #171a33;
   --muted: #5e6488;
   --shadow: 0 18px 40px -22px rgba(40, 40, 90, 0.35);
-  --accent: #6c5ce7;
-  --accent2: #e84393;
+  --accent: #9f224e;
+  --accent2: #c8432f;
 }
 
 * { box-sizing: border-box; }
@@ -349,3 +350,22 @@ svg.mood .halo { animation: halo 2.6s ease-in-out infinite; transform-box: fill-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ───── Đồ họa kể chuyện (trang chủ) ───── */
+.visuals { margin-bottom: 2.2rem; }
+.vis-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(300px, 1fr); gap: 1.1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.6rem; scrollbar-width: thin; }
+.vis-card { scroll-snap-align: start; display: flex; flex-direction: column; border-radius: var(--radius); overflow: hidden; background: #fcfaf6; color: #222; border: 1px solid var(--line); text-decoration: none; transition: transform 0.35s var(--ease), box-shadow 0.35s; }
+.vis-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+.vis-card .graphic { height: 230px; padding: 0.6rem; pointer-events: none; overflow: hidden; }
+.vis-card .graphic .g-legend, .vis-card .graphic .g-title, .vis-card .graphic .g-note { display: none; }
+.vis-card .graphic .g-compare { transform: scale(0.8); transform-origin: top center; }
+.vis-card .graphic .g-big { padding: 0.4rem; }
+.vis-card .graphic .big-val { font-size: calc(3.4rem * var(--k, 1)); }
+.vis-card .graphic .big-lbl { font-size: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.vis-card .graphic .big-sub, .vis-card .graphic .u-legend, .vis-card .graphic .map-pt text { display: none; }
+.vis-card .graphic .g-timeline { max-height: 210px; font-size: 0.8rem; }
+.vis-body { padding: 0.9rem 1.1rem 1.1rem; border-top: 1px solid #e3ddd3; }
+.vis-body small { color: #9f224e; font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.vis-body h3 { font-family: "Merriweather", Georgia, serif; font-size: 1.05rem; line-height: 1.4; margin: 0.35rem 0 0.4rem; }
+.vis-body p { margin: 0; font-size: 0.84rem; color: #555; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.badge.vis { left: auto; right: 0.75rem; top: auto; bottom: 0.75rem; background: #9f224e; }

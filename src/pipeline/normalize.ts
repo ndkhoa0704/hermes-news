@@ -61,6 +61,8 @@ export function normalizeStories(raw: unknown, articles: Article[]): { headline:
       importance: Math.round(num(r.importance, 1, 5, 3)),
       articleIds,
       art: normArt(r.art, category, id),
+      visualScore: Math.round(num(r.visualScore, 1, 5, 2)),
+      visualAngle: str(r.visualAngle, 300) || undefined,
     });
   }
   stories.sort((a, b) => b.importance - a.importance || b.articleIds.length - a.articleIds.length);
