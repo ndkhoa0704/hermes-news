@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="vi" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Hermes News — Toàn cảnh tin tức</title>
+    <meta name="description" content="Tin tức mới nhất từ VnExpress, Znews, Báo Mới được Hermes Agent tổng hợp và minh họa." />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📰</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="/">
+        <span class="logo">H</span>
+        <span class="brand-text"><b>Hermes</b> News</span>
+      </a>
+      <div class="top-meta" id="topMeta"></div>
+      <div class="top-actions">
+        <button class="btn ghost" id="themeBtn" title="Đổi giao diện sáng/tối">🌓</button>
+        <button class="btn primary" id="refreshBtn" title="Lấy tin mới & để Hermes biên tập lại">
+          <span class="spin" aria-hidden="true">↻</span><span class="lbl">Cập nhật</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="progress" id="progress" hidden>
+      <div class="progress-bar"><i></i></div>
+      <pre id="progressLog"></pre>
+    </section>
+
+    <main>
+      <section class="hero" id="hero">
+        <div class="skeleton hero-skel"></div>
+      </section>
+
+      <div class="feed">
+      <section class="toolbar">
+        <label class="search">
+          <span>🔎</span>
+          <input id="search" type="search" placeholder="Tìm câu chuyện, từ khóa, địa danh…" autocomplete="off" />
+        </label>
+        <div class="chips" id="chips"></div>
+        <select id="sort" class="select" aria-label="Sắp xếp">
+          <option value="custom">↕ Thứ tự của tôi</option>
+          <option value="importance">⭐ Quan trọng nhất</option>
+          <option value="newest">🕒 Mới nhất</option>
+          <option value="coverage">📰 Nhiều báo đưa</option>
+          <option value="positive">😊 Tích cực trước</option>
+          <option value="negative">😟 Tiêu cực trước</option>
+        </select>
+      </section>
+
+      <div class="layout">
+        <section class="stories">
+          <div class="section-head">
+            <h2>Câu chuyện nổi bật</h2>
+            <span class="hint">✋ Kéo thả để sắp xếp · kéo sang “Theo dõi” để ghim</span>
+          </div>
+          <div id="grid" class="grid"></div>
+          <p class="empty" id="empty" hidden>Không có câu chuyện nào khớp bộ lọc.</p>
+        </section>
+
+        <aside class="side">
+          <div class="panel watch-panel">
+            <div class="panel-head"><h3>📌 Theo dõi</h3><button class="link" id="clearWatch">Xóa hết</button></div>
+            <div id="watch" class="watch"></div>
+            <p class="drop-hint">Thả thẻ câu chuyện vào đây để ghim lại</p>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>⚡ Tin nhanh</h3><span class="muted" id="tickerCount"></span></div>
+            <ul id="ticker" class="ticker"></ul>
+          </div>
+        </aside>
+      </div>
+      </div>
+
+      <section class="dash">
+        <div class="section-head">
+          <h2>Toàn cảnh tin tức</h2>
+          <span class="hint">⠿ Kéo tiêu đề để đổi vị trí biểu đồ</span>
+        </div>
+        <div id="widgets" class="widgets">
+          <div class="widget w-wide" data-w="mood"><div class="w-head"><span class="w-handle">⠿</span><h3>Bản đồ cảm xúc</h3><small>trục ngang: tiêu cực → tích cực · trục dọc: mức quan trọng · bấm để đọc</small></div><div class="w-body" id="wMood"></div></div>
+          <div class="widget" data-w="cats"><div class="w-head"><span class="w-handle">⠿</span><h3>Theo chủ đề</h3></div><div class="w-body" id="wCats"></div></div>
+          <div class="widget" data-w="sources"><div class="w-head"><span class="w-handle">⠿</span><h3>Theo nguồn báo</h3></div><div class="w-body" id="wSources"></div></div>
+          <div class="widget w-wide" data-w="timeline"><div class="w-head"><span class="w-handle">⠿</span><h3>Nhịp đăng tin 24 giờ</h3></div><div class="w-body" id="wTimeline"></div></div>
+          <div class="widget" data-w="keywords"><div class="w-head"><span class="w-handle">⠿</span><h3>Từ khóa nóng</h3></div><div class="w-body" id="wKeywords"></div></div>
+          <div class="widget" data-w="places"><div class="w-head"><span class="w-handle">⠿</span><h3>Địa điểm được nhắc</h3></div><div class="w-body" id="wPlaces"></div></div>
+        </div>
+      </section>
+
+      <footer class="foot">
+        Dữ liệu: VnExpress · Znews · Báo Mới — biên tập &amp; minh họa trừu tượng bởi <b>Hermes Agent</b>. Bản quyền nội dung thuộc các báo gốc.
+      </footer>
+    </main>
+
+    <dialog id="modal" class="modal"></dialog>
+    <div id="tooltip" class="tooltip" hidden></div>
+    <script type="module" src="./app.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "hermes-news",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot src/server.ts",
+    "start": "NODE_ENV=production bun src/server.ts",
+    "pipeline": "bun src/pipeline/run.ts",
+    "pipeline:quick": "bun src/pipeline/run.ts --no-hermes",
+    "doctor": "bun scripts/doctor.ts",
+    "clean": "bun scripts/clean.sh",
+    "typecheck": "bun check"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/sortablejs": "^1.15.9"
+  },
+  "peerDependencies": {
+    "typescript": "^7"
+  },
+  "dependencies": {
+    "sortablejs": "^1.15.7"
+  }
+}
