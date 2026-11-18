@@ -607,7 +607,9 @@ function toast(msg: string) {
 await loadDigest();
 fetch("/api/status")
   .then((r) => r.json())
-  .then((st: { running: boolean }) => {
+  .then((st: { running: boolean; manualRefresh?: boolean; nextRun?: string | null }) => {
+    if (st.manualRefresh === false) $("#refreshBtn").hidden = true;
+    if (st.nextRun) $("#topMeta").insertAdjacentHTML("beforeend", `<span class="muted">· Bản tin kế tiếp ${new Date(st.nextRun).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}</span>`);
     if (st.running) {
       showProgress(true);
       void pollStatus();

@@ -40,7 +40,7 @@ bun run pipeline:quick    # không gọi Hermes (gom nhóm dự phòng)
 bun run dev               # http://127.0.0.1:3130 (hot reload)
 bun run start             # production
 ```
-Cấu hình qua `.env` (xem `.env.example`): cổng, lịch `REFRESH_CRON` (mặc định 2 tiếng/lần), model Hermes, số bài…
+Cấu hình qua `.env` (xem `.env.example`): cổng, lịch `REFRESH_CRON` (mặc định 8h30 sáng mỗi ngày), `ALLOW_MANUAL_REFRESH`, model Hermes, số bài…
 
 ## API
 - `GET /api/digest` – bản tin hiện tại (JSON)

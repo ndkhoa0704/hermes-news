@@ -8,7 +8,11 @@ export const config = {
   port: Number(process.env.PORT ?? 3130),
   hostname: process.env.HOST ?? "127.0.0.1",
   /** Lịch tự cập nhật (cron 5 trường, giờ địa phương). Rỗng = tắt. */
-  refreshCron: process.env.REFRESH_CRON ?? "0 */2 * * *",
+  refreshCron: process.env.REFRESH_CRON ?? "30 8 * * *",
+  /** Múi giờ cho lịch cron. */
+  tz: process.env.TZ_CRON ?? "Asia/Ho_Chi_Minh",
+  /** Cho phép bấm "Cập nhật" từ web (POST /api/refresh). Tắt khi public để không ai đốt token Hermes. */
+  manualRefresh: (process.env.ALLOW_MANUAL_REFRESH ?? "true") === "true",
   /** Lệnh Hermes CLI. */
   hermesBin: process.env.HERMES_BIN ?? "hermes",
   hermesModel: process.env.HERMES_MODEL ?? "", // rỗng = model mặc định của Hermes

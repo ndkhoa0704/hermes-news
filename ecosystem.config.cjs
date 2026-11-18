@@ -16,6 +16,10 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: '3130',
         HOST: '127.0.0.1',
+        // chỉ tổng hợp tin lúc 8h30 sáng (giờ VN); tắt nút cập nhật thủ công vì trang public
+        REFRESH_CRON: '30 8 * * *',
+        TZ_CRON: 'Asia/Ho_Chi_Minh',
+        ALLOW_MANUAL_REFRESH: 'false',
         // hermes nằm ở ~/.local/bin
         PATH: `${join(process.env.HOME || '', '.local', 'bin')}:${join(process.env.HOME || '', '.bun', 'bin')}:${process.env.PATH}`,
       },

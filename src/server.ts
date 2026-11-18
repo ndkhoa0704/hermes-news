@@ -35,7 +35,7 @@ async function refresh(reason: string) {
 }
 
 // Lịch tự động cập nhật — Bun.cron chạy trong tiến trình, không chồng lấn lần chạy
-const job = config.refreshCron ? Bun.cron(config.refreshCron, () => void refresh("cron")) : null;
+const job = config.refreshCron ? Bun.cron(config.refreshCron, () => void refresh("cron"), { tz: config.tz }) : null;
 process.on("unhandledRejection", (e) => console.error("unhandledRejection", e));
 
 const server = Bun.serve({
@@ -52,11 +52,13 @@ const server = Bun.serve({
     "/api/status": () =>
       Response.json({
         ...state,
-        nextRun: config.refreshCron ? Bun.cron.parse(config.refreshCron)?.toISOString() : null,
+        nextRun: config.refreshCron ? Bun.cron.parse(config.refreshCron, Date.now(), { tz: config.tz })?.toISOString() : null,
         cron: config.refreshCron || null,
+        manualRefresh: config.manualRefresh,
       }),
     "/api/refresh": {
       POST: async () => {
+        if (!config.manualRefresh) return Response.json({ error: "Cập nhật thủ công đã tắt" }, { status: 403 });
         const started = await refresh("manual");
         return Response.json({ started, running: state.running }, { status: started ? 202 : 409 });
       },
