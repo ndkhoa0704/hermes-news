@@ -160,6 +160,11 @@ export function normalizeVisual(raw: unknown, storyId: string, articleIds: strin
     .slice(0, 7);
   const title = str(raw.title, 160);
   if (!title || !hero || chapters.length < 2) return null;
+  // bắt buộc có mô hình 3D thật sự (≥ 3 khối không phải cây)
+  const isoOk = [hero, ...chapters.map((c) => c.graphic)].some(
+    (g) => g?.type === "iso" && g.blocks.filter((b) => b.kind !== "tree").length >= 3,
+  );
+  if (!isoOk) return null;
   return {
     storyId,
     kicker: str(raw.kicker, 60) || "Đồ họa",

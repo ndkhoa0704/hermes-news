@@ -21,8 +21,8 @@ cho từng sự kiện.
 ```
 
 ## Bài đồ họa kể chuyện (kiểu VnExpress Đồ họa)
-Sau bước biên tập, Hermes (Claude Sonnet 5, `--ignore-rules` để văn phong trung lập) chấm `visualScore` cho từng câu chuyện.
-5 câu chuyện tiềm năng nhất được đưa sang **ban Đồ họa**: pipeline lấy **toàn văn** các bài gốc (HTMLRewriter) rồi chạy
+Sau bước biên tập, Hermes (Claude Sonnet 5, `--ignore-rules` để văn phong trung lập) đánh giá `model3d` (feasible + độ tin 1–5) cho từng câu chuyện; chỉ câu chuyện dựng được mô hình 3D mới sang ban Đồ họa (có thể 0 bài/ngày). Ở ban Đồ họa, Hermes đọc toàn văn và được phép trả `{"skip":true}` nếu không đủ chi tiết; bài không có mô hình iso ≥ 3 khối bị loại.
+Tối đa 5 câu chuyện đạt chuẩn được đưa sang **ban Đồ họa**: pipeline lấy **toàn văn** các bài gốc (HTMLRewriter) rồi chạy
 song song mỗi câu chuyện một lượt Hermes với prompt `src/pipeline/visual-prompt.ts` để dựng bài longform scrollytelling:
 - hero + 3–5 chương, mỗi chương một đồ họa sticky, các bước văn bản cuộn qua và làm nổi từng phần (`focus`/`state`);
 - thư viện đồ họa: **iso** (mô hình 3D isometric, phần sai phạm/tâm điểm tô đỏ, chuyển cảnh quy hoạch ↔ thực tế),

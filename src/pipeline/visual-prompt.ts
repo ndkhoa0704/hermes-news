@@ -24,12 +24,19 @@ Phong cách của ban: các bài longform "kể chuyện bằng đồ họa" (sc
 người đọc cuộn trang, đồ họa đứng yên (sticky) và lần lượt làm nổi từng chi tiết theo đoạn văn; có biểu đồ "Quy hoạch được duyệt
 và hiện trạng" (mỗi chỉ tiêu một thang đo riêng), bản đồ vị trí, dòng thời gian, hộp số liệu và mục "Về dữ liệu" ở cuối bài.
 
-NHIỆM VỤ: dựng một bài đồ họa kể chuyện tiếng Việt cho câu chuyện dưới đây, dựa HOÀN TOÀN vào các nguồn được cung cấp.
+NHIỆM VỤ: dựng một bài đồ họa kể chuyện tiếng Việt XOAY QUANH MỘT MÔ HÌNH 3D (isometric) cho câu chuyện dưới đây,
+dựa HOÀN TOÀN vào các nguồn được cung cấp.
+
+BƯỚC 0 — TỰ ĐÁNH GIÁ TRƯỚC KHI LÀM: đọc toàn văn và trả lời: nguồn có đủ chi tiết hình khối/bố cục (số tòa, số tầng,
+kích thước, vị trí tương đối các hạng mục, phần bị thay đổi/hư hại) để dựng một mô hình 3D TRUNG THỰC không?
+Nếu KHÔNG (chỉ có tên địa danh, phát ngôn, số tiền, diễn biến chung…), ĐỪNG cố gắng và đừng bịa hình — chỉ ghi file:
+{ "skip": true, "reason": "1 câu lý do" }
+và trả lời XONG.
 
 ## Câu chuyện (do tổng biên tập gom cụm)
 Tiêu đề tạm: ${story.title}
 Tóm tắt: ${story.summary}
-Góc khai thác gợi ý: ${story.visualAngle ?? "(tự chọn)"}
+Mô hình 3D dự kiến (tổng biên tập đề xuất): ${story.model3d?.subject ?? "(chưa rõ)"}
 Địa điểm: ${story.location ?? "(không rõ)"}
 
 ## Nguyên tắc biên tập
@@ -40,13 +47,12 @@ Góc khai thác gợi ý: ${story.visualAngle ?? "(tự chọn)"}
 3. Cấu trúc: 3–5 chương. Mỗi chương có 1 đồ họa sticky và 2–4 "bước" (steps). Mỗi bước là đoạn văn 35–90 từ, kể một ý,
    và chỉ định phần đồ họa cần làm nổi bằng "focus" (danh sách key của phần tử trong đồ họa) và/hoặc "state".
    Chương cuối có thể không có đồ họa (chỉ văn bản) để kết luận/hệ quả/bước tiếp theo.
-4. Dùng ít nhất 3 LOẠI đồ họa khác nhau trong cả bài (tính cả hero). Ưu tiên SO SÁNH (kế hoạch vs thực tế, trước vs sau,
-   năm nay vs năm trước), QUY MÔ (units), DIỄN BIẾN (timeline), KHÔNG GIAN (map/iso), QUAN HỆ (actors/flow).
-5. HÌNH ẢNH LÀ TRỌNG TÂM: mỗi bài BẮT BUỘC có ít nhất một đồ họa không gian ("iso" hoặc "map"), và hero nên là "iso"
-   hoặc "map". Dùng "iso" (mô hình 3D minh họa) cho mọi câu chuyện có vật thể/không gian cụ thể: tòa nhà, dự án, nhà máy,
-   cây cầu, sân bay, bến cảng, trường học, bệnh viện, hiện trường tai nạn/cháy nổ/vụ án, đoàn xe, đội hình… — dựng lại bố cục
-   giản lược theo mô tả trong nguồn, tô đỏ phần là tâm điểm câu chuyện (sai phạm, nơi xảy ra sự việc, phần tăng thêm).
-   Dùng "map" cho sự kiện trải trên nhiều địa điểm/quốc gia. Chỉ dùng "bignumber" làm hero khi câu chuyện thuần số liệu.
+4. Ngoài mô hình 3D, dùng thêm 1–3 loại đồ họa khác khi nguồn có số liệu phù hợp: SO SÁNH (compare), QUY MÔ (units),
+   DIỄN BIẾN (timeline), KHÔNG GIAN (map), QUAN HỆ (actors/flow). Không có số liệu thì chỉ dùng văn bản.
+5. MÔ HÌNH 3D LÀ TRỌNG TÂM: "hero" BẮT BUỘC là đồ họa "iso" (≥ 3 khối), dựng lại bố cục giản lược theo mô tả trong nguồn,
+   tô đỏ phần là tâm điểm câu chuyện (sai phạm, phần xây thêm, nơi xảy ra sự việc, phần bị hư hại). Nếu câu chuyện có
+   "trước/sau" hoặc "quy hoạch/thực tế", dùng "showIn" + "stateLabels" để chuyển cảnh. Dùng lại mô hình iso ở chương 1
+   với các bước "focus" lần lượt vào từng khối để giải thích chi tiết.
 6. Văn phong báo chí trung lập, câu ngắn, giàu thông tin. Không dùng emoji. Không xưng "tôi/mình".
 7. "dataNotes": 2–4 dòng "Về dữ liệu" — nguồn số liệu (tên báo/cơ quan), và ghi rõ đồ họa nào chỉ mang tính minh họa
    (ví dụ: "Mô hình 3D minh họa tỉ lệ và số lượng, không phải bản vẽ kiến trúc").

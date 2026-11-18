@@ -32,6 +32,17 @@ function normArt(raw: unknown, category: Category, seed: string): ArtSpec {
   };
 }
 
+function normModel3d(v: unknown): Story["model3d"] {
+  if (!v || typeof v !== "object") return { feasible: false, confidence: 1 };
+  const r = v as Record<string, unknown>;
+  return {
+    feasible: r.feasible === true,
+    confidence: Math.round(num(r.confidence, 1, 5, 1)),
+    subject: str(r.subject, 300) || undefined,
+    reason: str(r.reason, 300) || undefined,
+  };
+}
+
 /** Kiểm tra & làm sạch output của Hermes, nối với danh sách bài thật. */
 export function normalizeStories(raw: unknown, articles: Article[]): { headline: string; overview: string; stories: Story[] } {
   const obj = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
@@ -61,8 +72,7 @@ export function normalizeStories(raw: unknown, articles: Article[]): { headline:
       importance: Math.round(num(r.importance, 1, 5, 3)),
       articleIds,
       art: normArt(r.art, category, id),
-      visualScore: Math.round(num(r.visualScore, 1, 5, 2)),
-      visualAngle: str(r.visualAngle, 300) || undefined,
+      model3d: normModel3d(r.model3d),
     });
   }
   stories.sort((a, b) => b.importance - a.importance || b.articleIds.length - a.articleIds.length);

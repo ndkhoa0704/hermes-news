@@ -8,10 +8,12 @@ import { runHermes } from "./hermes";
 import { normalizeVisual } from "./normalize-visual";
 import { buildVisualPrompt, type SourceDoc } from "./visual-prompt";
 
-/** Chọn câu chuyện hợp làm đồ họa: điểm = visualScore × importance, ưu tiên nhiều nguồn. */
+/** Cổng 1: chỉ chọn câu chuyện Hermes đánh giá dựng được mô hình 3D (feasible, độ tin ≥ 3). Không đủ thì làm ít hơn hoặc không làm. */
 export function pickVisualStories(stories: Story[], n = config.visualCount): Story[] {
-  return [...stories]
-    .sort((a, b) => (b.visualScore ?? 2) * b.importance + b.articleIds.length * 0.3 - ((a.visualScore ?? 2) * a.importance + a.articleIds.length * 0.3))
+  const score = (s: Story) => (s.model3d?.confidence ?? 0) * 2 + s.importance + s.articleIds.length * 0.3;
+  return stories
+    .filter((s) => s.model3d?.feasible && (s.model3d.confidence ?? 0) >= 3)
+    .sort((a, b) => score(b) - score(a))
     .slice(0, n);
 }
 
@@ -53,8 +55,15 @@ export async function runVisualDesk(
       const promptPath = join(dir, "prompt.md");
       await Bun.write(promptPath, buildVisualPrompt(story, docs, outPath));
       const res = await runHermes(promptPath, outPath, dir);
+      // Cổng 2: Hermes đọc toàn văn có thể từ chối nếu không đủ chi tiết hình khối
+      const raw = res.raw as Record<string, unknown> | null;
+      if (raw && raw.skip === true) {
+        log(`   – bỏ qua "${story.title.slice(0, 50)}…": ${String(raw.reason ?? "không đủ dữ liệu dựng 3D").slice(0, 160)}`);
+        return null;
+      }
+      // Cổng 3: bài phải thực sự có mô hình 3D (≥ 3 khối)
       const vs = normalizeVisual(res.raw, story.id, story.articleIds);
-      if (!vs) throw new Error("JSON đồ họa không hợp lệ / quá ít nội dung");
+      if (!vs) throw new Error("JSON đồ họa không hợp lệ / không có mô hình 3D đủ chi tiết");
       log(`   ✓ đồ họa: ${vs.title} (${Math.round(res.ms / 1000)}s)`);
       return vs;
     } catch (e) {

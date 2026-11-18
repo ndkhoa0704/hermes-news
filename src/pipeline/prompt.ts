@@ -46,9 +46,12 @@ Cấu trúc JSON:
       "sentiment": số từ -1 (rất tiêu cực) đến 1 (rất tích cực),
       "importance": số nguyên 1–5,
       "articleIds": ["id các bài thuộc câu chuyện, lấy đúng từ dữ liệu"],
-      "visualScore": số nguyên 1–5 — mức phù hợp để dựng bài đồ họa kể chuyện (5 = nhiều số liệu cụ thể, có so sánh
-                     trước/sau hoặc kế hoạch/thực tế, có yếu tố không gian/công trình/địa lý hoặc diễn biến theo thời gian),
-      "visualAngle": "1 câu: nếu làm đồ họa thì kể bằng hình gì (vd: mô hình 3D so sánh quy hoạch và thực tế; bản đồ đường đi của bão)",
+      "model3d": {
+        "feasible": true/false — có dựng được MÔ HÌNH 3D minh họa trung thực từ dữ liệu bài báo không (xem tiêu chí bên dưới),
+        "confidence": số nguyên 1–5 (5 = nguồn mô tả rất rõ hình khối/bố cục),
+        "subject": "vật thể/không gian sẽ dựng, vd: 'ba tòa tháp CT6 trên khối đế 3 tầng và 38 nhà liền kề'" (bỏ trống nếu false),
+        "reason": "1 câu giải thích"
+      },
       "art": {
         "motif": một trong các mô-típ bên dưới,
         "palette": ["3–5 mã màu hex #rrggbb hợp cảm xúc: tông lạnh/tối cho tin buồn, ấm/sáng cho tin vui"],
@@ -59,6 +62,15 @@ Cấu trúc JSON:
     }
   ]
 }
+
+TIÊU CHÍ "model3d.feasible" — chỉ true khi THỎA CẢ BA:
+  (a) Tâm điểm câu chuyện là một VẬT THỂ HOẶC KHÔNG GIAN VẬT LÝ cụ thể: tòa nhà, dự án, công trình, cây cầu, đường, cống,
+      nhà máy, sân bay, cảng, trường, bệnh viện, hiện trường tai nạn/cháy/sập, khu đất, phương tiện/đội hình…
+  (b) Bài viết có chi tiết hình khối/bố cục đủ để dựng lại: số tòa, số tầng, chiều cao, kích thước, diện tích, số nhà,
+      vị trí tương đối các hạng mục, phần nào bị sửa đổi/hư hại/xây thêm…
+  (c) Mô hình giúp người đọc hiểu câu chuyện hơn so với chữ (vd: so sánh quy hoạch với thực tế, phần bị phá hủy, quy mô công trình).
+  Luôn false với: biến động giá/thị trường, phát ngôn, hội nghị/ngoại giao, kết quả thể thao, chính sách chung chung,
+  vụ án không gắn với công trình/hiện trường cụ thể, tin người nổi tiếng, chiến sự chỉ có tên địa danh. Đừng cố gắng: nếu phân vân, chọn false.
 
 MÔ-TÍP HÌNH ẢNH:
 ${motifs}

@@ -91,7 +91,13 @@ export async function runPipeline(opts: RunOptions = {}): Promise<Digest> {
 /** Dựng bài đồ họa cho digest (ghi data/visual/<storyId>.json và đánh dấu hasVisual). */
 export async function buildVisuals(digest: Digest, runDir: string, log: (m: string) => void) {
   const picked = pickVisualStories(digest.stories);
-  log(`② b Ban Đồ họa (Hermes) dựng ${picked.length} bài kể chuyện bằng đồ họa…`);
+  const feasible = digest.stories.filter((s) => s.model3d?.feasible).length;
+  log(`② b Ban Đồ họa: ${feasible}/${digest.stories.length} câu chuyện được đánh giá dựng được 3D → làm ${picked.length} bài`);
+  if (picked.length === 0) {
+    for (const s of digest.stories) s.hasVisual = false;
+    log("   → hôm nay không có câu chuyện nào đủ điều kiện dựng mô hình 3D, bỏ qua");
+    return;
+  }
   const visuals = await runVisualDesk(picked, new Map(digest.articles.map((a) => [a.id, a])), runDir, log);
   await $`mkdir -p ${VISUAL_DIR}`;
   for (const v of visuals) await Bun.write(join(VISUAL_DIR, `${v.storyId}.json`), JSON.stringify(v));

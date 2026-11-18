@@ -74,9 +74,8 @@ export interface Story {
   importance: number; // 1..5
   articleIds: string[];
   art: ArtSpec;
-  /** 1..5: tiềm năng dựng thành bài đồ họa (có số liệu, không gian, so sánh, diễn biến). */
-  visualScore?: number;
-  visualAngle?: string;
+  /** Đánh giá khả năng dựng mô hình 3D (do Hermes chấm ở bước biên tập). */
+  model3d?: { feasible: boolean; confidence: number; subject?: string; reason?: string };
   /** Có bài đồ họa kể chuyện (trang /story/:id). */
   hasVisual?: boolean;
 }
