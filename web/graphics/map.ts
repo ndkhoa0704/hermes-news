@@ -103,5 +103,6 @@ export async function renderMap(el: HTMLElement, scope: "vietnam" | "world" | "l
       .map((c) => `<path class="land vn" d="${pathOf(c, ip)}"/>`)
       .join("")}<circle cx="${f1(lx)}" cy="${f1(ly)}" r="5" class="locator"/></g>`;
   }
-  el.innerHTML = `<svg class="g-map ${scope}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${svg}</svg>`;
+  const cid = "mapclip" + Math.random().toString(36).slice(2, 8);
+  el.innerHTML = `<svg class="g-map ${scope}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"><defs><clipPath id="${cid}"><rect width="${W}" height="${H}" rx="6"/></clipPath></defs><g clip-path="url(#${cid})">${svg}</g></svg>`;
 }
