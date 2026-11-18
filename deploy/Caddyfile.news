@@ -1,0 +1,8 @@
+news.koanguyn.org {
+	import logging
+	encode zstd gzip
+	# chỉ đọc: chặn kích hoạt pipeline từ bên ngoài (app cũng trả 403)
+	@refresh path /api/refresh
+	respond @refresh 403
+	reverse_proxy 127.0.0.1:3130
+}
