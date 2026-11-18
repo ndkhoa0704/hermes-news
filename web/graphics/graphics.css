@@ -79,11 +79,11 @@
 .g-map .sea { fill: #eef1f3; }
 .g-map .land { fill: #ece7df; stroke: #fff; stroke-width: 0.6; }
 .g-map .land.vn { fill: #f2d8d0; stroke: #d9a99b; }
-.g-map.world .land.vn { fill: var(--hot); }
+.g-map.world .land.vn { fill: #f2d8d0; }
 .g-map .islands circle { fill: #d9a99b; }
 .g-map .islands text { font: 600 10px var(--sans); fill: #8a5a4c; }
 .g-map .ground { fill: #f4f0e8; }
-.g-map .street { stroke: #fff; stroke-width: 6; }
+.g-map .street { stroke: #fff; stroke-width: 4; opacity: .8; }
 .g-map .street.main { stroke-width: 12; stroke: #fdfcf9; }
 .g-map .inset { fill: #fff; stroke: var(--line); }
 .g-map .locator { fill: var(--hot); }

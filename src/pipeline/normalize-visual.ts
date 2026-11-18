@@ -92,7 +92,13 @@ export function normGraphic(v: unknown): Graphic | null {
         highlight?: boolean;
       }[];
       if (!points.length) return null;
-      const scope = (["vietnam", "world", "local"] as const).includes(v.scope as never) ? (v.scope as "vietnam" | "world" | "local") : "vietnam";
+      let scope = (["vietnam", "world", "local"] as const).includes(v.scope as never) ? (v.scope as "vietnam" | "world" | "local") : "vietnam";
+      // sửa scope theo toạ độ thật: "local" chỉ khi các điểm gần nhau; ngoài lãnh thổ VN → world
+      const lats = points.map((p) => p.lat), lons = points.map((p) => p.lon);
+      const span = Math.max(Math.max(...lats) - Math.min(...lats), Math.max(...lons) - Math.min(...lons));
+      const inVN = points.every((p) => p.lat >= 7 && p.lat <= 24 && p.lon >= 101 && p.lon <= 118);
+      if (scope === "local" && (span > 0.6 || !inVN)) scope = inVN ? "vietnam" : "world";
+      if (scope === "vietnam" && !inVN) scope = "world";
       return { type: "map", title, scope, points: points.slice(0, 30) };
     }
     case "flow": {

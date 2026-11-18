@@ -53,8 +53,17 @@ export async function renderMap(el: HTMLElement, scope: "vietnam" | "world" | "l
   let svg = "";
   if (scope === "world") {
     const world = await load("world");
-    const p = projector([-170, -58, 190, 80], W, H);
-    svg = world.map((c) => `<path class="land${c.id === VN_ID ? " vn" : ""}" d="${pathOf(c, p)}"/>`).join("") + pointsSvg(points, p, W);
+    // khung vừa các điểm (tối thiểu 40°×22°), không có điểm thì cả thế giới
+    let bb: [number, number, number, number] = [-170, -58, 190, 80];
+    if (points.length) {
+      let x0 = Math.min(...points.map((q) => q.lon)), x1 = Math.max(...points.map((q) => q.lon));
+      let y0 = Math.min(...points.map((q) => q.lat)), y1 = Math.max(...points.map((q) => q.lat));
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const hw = Math.max(20, (x1 - x0) * 0.65), hh = Math.max(11, (y1 - y0) * 0.65);
+      bb = [cx - hw, Math.max(-60, cy - hh), cx + hw, Math.min(82, cy + hh)];
+    }
+    const p = projector(bb, W, H);
+    svg = `<rect class="sea" width="${W}" height="${H}"/>` + world.map((c) => `<path class="land${c.id === VN_ID ? " vn" : ""}" d="${pathOf(c, p)}"/>`).join("") + pointsSvg(points, p, W);
   } else if (scope === "vietnam") {
     const sea = await load("sea");
     // khung: Việt Nam + điểm nằm ngoài (nếu có)
@@ -77,12 +86,12 @@ export async function renderMap(el: HTMLElement, scope: "vietnam" | "world" | "l
     const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
     const p = projector([cx - span, cy - span * 0.8, cx + span, cy + span * 0.8], W, H);
     let streets = "";
-    for (let i = 0; i < 26; i++) {
+    for (let i = 0; i < 14; i++) {
       const a = (i * 137.5) % 180;
       const o = (i * 61) % W;
       streets += `<line x1="${o}" y1="0" x2="${f1(o + Math.cos((a * Math.PI) / 180) * 900)}" y2="${H}" class="street${i % 5 === 0 ? " main" : ""}"/>`;
     }
-    for (let i = 0; i < 14; i++) streets += `<line x1="0" y1="${(i * 47) % H}" x2="${W}" y2="${f1(((i * 47) % H) + (i % 2 ? 60 : -40))}" class="street${i % 4 === 0 ? " main" : ""}"/>`;
+    for (let i = 0; i < 8; i++) streets += `<line x1="0" y1="${(i * 47) % H}" x2="${W}" y2="${f1(((i * 47) % H) + (i % 2 ? 60 : -40))}" class="street${i % 4 === 0 ? " main" : ""}"/>`;
     svg = `<rect class="ground" width="${W}" height="${H}"/>${streets}` + pointsSvg(points, p, W);
     // bản đồ định vị nhỏ
     const sea = await load("sea");
