@@ -106,7 +106,7 @@ ${dots}</svg>`;
 
 /** Đám mây bong bóng từ khóa, đặt theo hình xoắn ốc tránh chồng lấp. */
 export function bubbles(words: { text: string; value: number; color: string }[]): string {
-  const W = 360, H = 260;
+  const W = 720, H = 260;
   const max = Math.max(1, ...words.map((w) => w.value));
   const placed: { x: number; y: number; r: number }[] = [];
   const out: string[] = [];
